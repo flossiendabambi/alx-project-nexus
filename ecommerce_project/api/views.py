@@ -1,12 +1,13 @@
 from django.shortcuts import render
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from .models import Product, Category, Review, Cart, Cartitems
-from .serializers import ProductSerializer, CategorySerializer, ReviewSerializer, CartSerializer, CartItemSerializer, AddCartItemSerializer, UpdateCartItemSerializer
+from .serializers import *
 from django_filters.rest_framework import DjangoFilterBackend
 from .filters import ProductFilter
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, DestroyModelMixin
+from rest_framework.permissions import IsAuthenticated
 
 
 class ProductViewSet(ModelViewSet):
@@ -54,3 +55,13 @@ class CartItemViewSet(ModelViewSet):
     
     def get_serializer_context(self):
         return {"cart_id": self.kwargs["cart_pk"]}
+    
+class OrderViewSet(ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = OderSerializers
+    
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_staff:
+            return Order.objects.all()
+        return Order.objects.filter(owner= user)

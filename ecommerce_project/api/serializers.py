@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from djoser.serializers import UserCreateSerializer
-from .models import Product, Category, Review, Cart, Cartitems, ProductImage
+from .models import Product, Category, Review, Cart, Cartitems, ProductImage, Order, OrderItem
 
 
 class MyUserCreateSerializer(UserCreateSerializer):
@@ -112,3 +112,16 @@ class UpdateCartItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cartitems
         fields = ["quantity"]
+        
+class OrderItemSerializer(serializers.ModelSerializer):
+    product = SimpleProductSerializer()
+    class Meta:
+        model = OrderItem
+        fields = ['id', 'product', 'quantity']
+        
+class OderSerializers(serializers.ModelSerializer):
+    items = OrderItemSerializer(many=True, read_only=True)
+    class Meta:
+        model = Order
+        fields = ['id', 'placed_at', 'pending_status', 'owner', 'items']
+        
