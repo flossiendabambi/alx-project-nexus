@@ -172,3 +172,5 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'ndabambiflorence17@gmail.com'
 EMAIL_HOST_PASSWORD = 'your_app_password'  # Use app password for Gmail
 DEFAULT_FROM_EMAIL = 'Shop <ndabambiflorence17@gmail.com>'
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"

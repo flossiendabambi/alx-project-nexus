@@ -16,7 +16,7 @@ def home(request):
 
 
 class ProductViewSet(ModelViewSet):
-    queryset =Product.objects.all()
+    queryset =Product.objects.all().order_by('id')
     serializer_class = ProductSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = ProductFilter
