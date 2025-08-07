@@ -31,10 +31,13 @@ SECRET_KEY = 'django-insecure-w3be@1!n@+mq)0l0vo!b7tca@^+8*w%!g1=47&@o2uqn3j98x@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-if os.environ.get('RENDER'):
-    ALLOWED_HOSTS = ['ecommerce-project-084g.onrender.com']
-else:
-    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['*']
+
+# if os.environ.get('RENDER'):
+#     ALLOWED_HOSTS = ['ecommerce-project-084g.onrender.com']
+# else:
+#     ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -87,7 +90,7 @@ WSGI_APPLICATION = 'ecommerce_backend.wsgi.application'
 if os.getenv('RENDER', '') == 'true':
     # Production (Render)
     DATABASES = {
-        'default': dj_database_url.config(conn_max_age=600)
+        'default': dj_database_url.config('postgresql://myuser:OBdjLsTbnNwpQpILxiWdmoYceF4jHZTz@dpg-d2a5rqjuibrs73btuvng-a/dbname_6u4x')
     }
 else:
     # Development (local)
