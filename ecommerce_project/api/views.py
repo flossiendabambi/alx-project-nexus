@@ -25,7 +25,7 @@ class ProductViewSet(ModelViewSet):
     pagination_class = PageNumberPagination
 
 class CategoryViewSet(ModelViewSet):
-    queryset = Category.objects.all()
+    queryset = Category.objects.all().order_by('category_id')
     serializer_class = CategorySerializer
     
 class ReviewViewSet(ModelViewSet):
