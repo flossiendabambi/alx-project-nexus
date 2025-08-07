@@ -19,9 +19,11 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from api.schema import schema_view
+from api.views import home
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', home),
     path("api/", include("api.urls")),
     path("auth/", include('djoser.urls')),
     path("auth/", include('djoser.urls.jwt')),
