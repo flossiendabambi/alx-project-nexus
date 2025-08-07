@@ -90,7 +90,7 @@ WSGI_APPLICATION = 'ecommerce_backend.wsgi.application'
 if os.getenv('RENDER', '') == 'true':
     # Production (Render)
     DATABASES = {
-        'default': dj_database_url.config('postgresql://myuser:OBdjLsTbnNwpQpILxiWdmoYceF4jHZTz@dpg-d2a5rqjuibrs73btuvng-a/dbname_6u4x')
+        'default': dj_database_url.config(default='postgres://localhost', conn_max_age=600)
     }
 else:
     # Development (local)
