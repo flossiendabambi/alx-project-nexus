@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from djoser.serializers import UserCreateSerializer
-from .models import Product, Category, Review, Cart, Cartitems, ProductImage, Order, OrderItem
-
+from .models import Product, Category, Review, Cart, Cartitems, ProductImage, Order, OrderItems
+from django.db import transaction
 
 class MyUserCreateSerializer(UserCreateSerializer):
     class Meta(UserCreateSerializer.Meta):
@@ -116,12 +116,30 @@ class UpdateCartItemSerializer(serializers.ModelSerializer):
 class OrderItemSerializer(serializers.ModelSerializer):
     product = SimpleProductSerializer()
     class Meta:
-        model = OrderItem
+        model = OrderItems
         fields = ['id', 'product', 'quantity']
         
-class OderSerializers(serializers.ModelSerializer):
+class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True, read_only=True)
     class Meta:
         model = Order
         fields = ['id', 'placed_at', 'pending_status', 'owner', 'items']
         
+class CreateOrderSerializer(serializers.Serializer):
+    cart_id = serializers.UUIDField()
+    
+    def save(self, **kwargs):
+        with transaction.atomic():
+            cart_id = self.validated_data["cart_id"]
+            user_id = self.context["user_id"]
+            order = Order.objects.create(owner_id = user_id)
+            cartitems = Cartitems.objects.filter(cart_id=cart_id)
+            orderitems = [
+                OrderItems(order=order, 
+                           product=item.product, 
+                           quantity=item.quantity
+                           )
+            for item in cartitems
+            ]
+            OrderItems.objects.bulk_create(orderitems)
+            Cart.objects.filter(cart_id=cart_id).delete()

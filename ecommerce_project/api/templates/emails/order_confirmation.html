@@ -1,0 +1,14 @@
+Hi {{ order.customer.first_name }},
+
+Thank you for your order #{{ order.id }}!
+We are processing it and will notify you when it ships.
+
+Order Summary:
+{% for item in order.items.all %}
+- {{ item.product.name }} (x{{ item.quantity }})
+{% endfor %}
+
+Total: ${{ order.total }}
+
+Regards,  
+The Shop Team

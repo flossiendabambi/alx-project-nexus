@@ -8,6 +8,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, DestroyModelMixin
 from rest_framework.permissions import IsAuthenticated
+from .tasks import send_order_confirmation_email
 
 
 class ProductViewSet(ModelViewSet):
@@ -58,10 +59,24 @@ class CartItemViewSet(ModelViewSet):
     
 class OrderViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
-    serializer_class = OderSerializers
+    serializer_class = OrderSerializer
+    
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return CreateOrderSerializer
+        return OrderSerializer
+            
     
     def get_queryset(self):
         user = self.request.user
         if user.is_staff:
             return Order.objects.all()
         return Order.objects.filter(owner= user)
+    
+    def get_serializer_context(self):
+        return {'user_id': self.request.user.id}
+    
+    def perform_create(self, serializer):
+        order = serializer.save()
+        # Trigger email notification asynchronously
+        send_order_confirmation_email.delay(order.id)
