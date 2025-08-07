@@ -87,10 +87,11 @@ WSGI_APPLICATION = 'ecommerce_backend.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-if os.getenv('RENDER', '') == 'true':
-    # Production (Render)
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if DATABASE_URL:
     DATABASES = {
-        'default': dj_database_url.config(default='postgres://localhost', conn_max_age=600)
+        'default': dj_database_url.config(conn_max_age=600)
     }
 else:
     # Development (local)
