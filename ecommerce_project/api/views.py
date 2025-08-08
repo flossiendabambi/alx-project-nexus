@@ -8,7 +8,6 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, DestroyModelMixin
 from rest_framework.permissions import IsAuthenticated
-from .tasks import send_order_confirmation_email
 from django.shortcuts import render
 from datetime import datetime
 
@@ -80,8 +79,3 @@ class OrderViewSet(ModelViewSet):
     
     def get_serializer_context(self):
         return {'user_id': self.request.user.id}
-    
-    def perform_create(self, serializer):
-        order = serializer.save()
-        # Trigger email notification asynchronously
-        send_order_confirmation_email.delay(order.id)
