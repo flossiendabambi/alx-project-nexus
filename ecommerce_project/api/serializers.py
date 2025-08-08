@@ -130,17 +130,27 @@ class CreateOrderSerializer(serializers.Serializer):
     cart_id = serializers.UUIDField()
     
     def save(self, **kwargs):
-        with transaction.atomic():
-            cart_id = self.validated_data["cart_id"]
-            user_id = self.context["user_id"]
-            order = Order.objects.create(owner_id = user_id)
-            cartitems = Cartitems.objects.filter(cart_id=cart_id)
-            orderitems = [
-                OrderItems(order=order, 
-                           product=item.product, 
-                           quantity=item.quantity
-                           )
-            for item in cartitems
-            ]
-            OrderItems.objects.bulk_create(orderitems)
-            Cart.objects.filter(cart_id=cart_id).delete()
+        try:
+            with transaction.atomic():
+                cart_id = self.validated_data["cart_id"]
+                user_id = self.context.get("user_id")
+                if not user_id:
+                    raise ValueError("User ID is missing from context.")
+                
+                order = Order.objects.create(owner_id=user_id)
+                cartitems = Cartitems.objects.filter(cart_id=cart_id)
+
+                if not cartitems.exists():
+                    raise ValueError("Cart is empty or does not exist.")
+
+                orderitems = [
+                    OrderItems(order=order, 
+                            product=item.product, 
+                            quantity=item.quantity)
+                    for item in cartitems
+                ]
+                OrderItems.objects.bulk_create(orderitems)
+                Cart.objects.filter(cart_id=cart_id).delete()
+                return order
+        except Exception as e:
+            raise serializers.ValidationError({"error": str(e)})
