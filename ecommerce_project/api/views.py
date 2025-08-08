@@ -9,10 +9,11 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, DestroyModelMixin
 from rest_framework.permissions import IsAuthenticated
 from .tasks import send_order_confirmation_email
-from django.http import HttpResponse
+from django.shortcuts import render
+from datetime import datetime
 
 def home(request):
-    return HttpResponse("Welcome to my ALX Ecommerce Project (Project Nexus)")
+    return render(request, 'home.html', {'year': datetime.now().year})
 
 
 class ProductViewSet(ModelViewSet):
