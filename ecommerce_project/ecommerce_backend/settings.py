@@ -185,3 +185,35 @@ DEFAULT_FROM_EMAIL = 'Shop <ndabambiflorence17@gmail.com>'
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG',  # Change to INFO in production if too noisy
+    },
+    'loggers': {
+        'django.db.backends': {  # SQL queries
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+        'django.request': {  # Request/response errors
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+}
