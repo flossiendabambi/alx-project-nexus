@@ -7,6 +7,7 @@ from .filters import ProductFilter
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, DestroyModelMixin
+from rest_framework import viewsets, mixins
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import render
 from datetime import datetime
@@ -61,7 +62,10 @@ class CartItemViewSet(ModelViewSet):
     def get_serializer_context(self):
         return {"cart_id": self.kwargs["cart_pk"]}
     
-class OrderViewSet(ModelViewSet):
+class OrderViewSet(mixins.ListModelMixin,
+                   mixins.RetrieveModelMixin,
+                   mixins.CreateModelMixin,
+                   viewsets.GenericViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = OrderSerializer
     
